@@ -1,60 +1,191 @@
-# Kubernetes Kind Voting App 
+# 🚀 Kubernetes Monitoring Setup with Prometheus & Grafana (Minikube)
 
-A comprehensive guide for setting up a Kubernetes cluster using Kind on an AWS EC2 instance, installing and configuring Argo CD, and deploying applications using Argo CD.
+## 📌 Project Overview
 
-## Overview
+This project demonstrates how to set up a complete Kubernetes monitoring stack locally using Minikube, Helm, Prometheus, and Grafana.
 
-This guide covers the steps to:
-- Launch an AWS EC2 instance.
-- Install Docker and Kind.
-- Create a Kubernetes cluster using Kind.
-- Install and access kubectl.
-- Set up the Kubernetes Dashboard.
-- Install and configure Argo CD.
-- Connect and manage your Kubernetes cluster with Argo CD.
+A sample Voting Application is also deployed and monitored using Grafana dashboards.
 
+---
 
-## Architecture
+## 🧰 Tech Stack
 
-![Architecture diagram](k8s-kind-voting-app.png)
+- Kubernetes (Minikube)
+- Helm
+- Prometheus
+- Grafana
+- Docker
+- Voting Application (Microservices-based app)
 
-## Observability
+---
 
-![Grafana diagram](grafana.png)
-![Prometheus diagram](prometheus.png)
+## 🎯 Objectives
 
-* A front-end web app in [Python](/vote) which lets you vote between two options
-* A [Redis](https://hub.docker.com/_/redis/) which collects new votes
-* A [.NET](/worker/) worker which consumes votes and stores them in…
-* A [Postgres](https://hub.docker.com/_/postgres/) database backed by a Docker volume
-* A [Node.js](/result) web app which shows the results of the voting in real time
+- Deploy a local Kubernetes cluster
+- Install monitoring stack using Helm
+- Visualize cluster metrics using Grafana
+- Monitor application (Voting App)
 
+---
 
+## ⚙️ Prerequisites
 
-## Resume Description
+Make sure the following tools are installed:
 
-### Project Title: 
+- Docker
+- kubectl
+- Minikube
+- Helm
 
-Automated Deployment of Scalable Applications on AWS EC2 with Kubernetes and Argo CD
+---
 
-### Description: 
+## 🚀 Setup Steps
 
-Led the deployment of scalable applications on AWS EC2 using Kubernetes and Argo CD for streamlined management and continuous integration. Orchestrated deployments via Kubernetes dashboard, ensuring efficient resource utilization and seamless scaling.
+### 1️⃣ Start Minikube
 
-### Key Technologies:
+```bash
+minikube start --memory=4096 --cpus=2 --driver=docker
+```
 
-* AWS EC2: Infrastructure hosting for Kubernetes clusters.
-* Kubernetes Dashboard: User-friendly interface for managing containerized applications.
-* Argo CD: Continuous Delivery tool for automated application deployments.
+---
 
-### Achievements:
+### 2️⃣ Verify Cluster
 
-Implemented Kubernetes dashboard for visual management of containerized applications on AWS EC2 instances.
-Utilized Argo CD for automated deployment pipelines, enhancing deployment efficiency by 60%.
-Achieved seamless scaling and high availability, supporting 99.9% uptime for critical applications.
-This project description emphasizes your role in leveraging AWS EC2, Kubernetes, and Argo CD to optimize application deployment and management processes effectively.
+```bash
+kubectl get nodes
+```
 
+---
 
-### Aapke DevOps Wale Bhaiya
-### [TrainWithShubham](https://www.trainwithshubham.com/)
+### 3️⃣ Install Helm
 
+Verify installation:
+
+```bash
+helm version
+```
+
+---
+
+### 4️⃣ Add Prometheus Helm Repository
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+```
+
+---
+
+### 5️⃣ Install Prometheus & Grafana
+
+```bash
+helm install prometheus-stack prometheus-community/kube-prometheus-stack \
+--namespace monitoring \
+--create-namespace \
+--set grafana.service.type=NodePort \
+--set prometheus.service.type=NodePort
+```
+
+---
+
+### 6️⃣ Verify Pods
+
+```bash
+kubectl get pods -n monitoring
+```
+
+Wait until all pods are in **Running** state.
+
+---
+
+### 7️⃣ Access Grafana
+
+```bash
+minikube service prometheus-stack-grafana -n monitoring
+```
+
+---
+
+## 🔐 Grafana Login
+
+- Username: `admin`
+
+Get password:
+
+```bash
+kubectl get secret prometheus-stack-grafana -n monitoring -o jsonpath="{.data.admin-password}"
+```
+
+Decode using any Base64 decoder.
+
+---
+
+## 📊 Monitoring
+
+Grafana provides pre-built dashboards for:
+
+- Node CPU & Memory Usage
+- Pod Metrics
+- Cluster Performance
+
+---
+
+## 🗳️ Voting Application Deployment
+
+- Deployed a sample microservices-based voting app on Kubernetes
+- Monitored application performance using Prometheus metrics
+- Visualized data in Grafana dashboards
+
+---
+
+## ⚠️ Challenges Faced
+
+- Insufficient resources on AWS (t3.small)
+- Pods stuck in Pending / ContainerCreating state
+- Docker memory limitation on Windows (WSL2)
+
+---
+
+## ✅ Solutions
+
+- Switched to local setup using Minikube
+- Increased WSL2 memory using `.wslconfig`
+- Optimized resource allocation
+
+---
+
+## 🎯 Key Learnings
+
+- Kubernetes cluster setup using Minikube
+- Helm-based deployments
+- Monitoring with Prometheus & Grafana
+- Troubleshooting resource issues
+- Real-world DevOps workflow
+
+---
+
+## 📸 Screenshots
+
+_Add screenshots of Grafana dashboards, pod status, and application UI here_
+
+---
+
+## 🚀 Future Enhancements
+
+- Custom Grafana dashboards
+- Alerting with Alertmanager
+- Deployment on cloud (EKS/GKE)
+- CI/CD pipeline integration
+
+---
+
+## 👨‍💻 Author
+
+**Nagesh Jaybhaye**  
+CloudOps / DevOps Engineer
+
+---
+
+## ⭐ Conclusion
+
+This project demonstrates a complete end-to-end Kubernetes monitoring setup, showcasing practical DevOps and observability skills.
