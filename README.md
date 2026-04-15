@@ -1,5 +1,9 @@
 # 🚀 Kubernetes Monitoring Setup with Prometheus & Grafana (Minikube)
 
+## 🔄 Grafana Dashboard
+
+![Grafana](grafana.png)
+
 ## 📌 Project Overview
 
 This project demonstrates how to set up a complete Kubernetes monitoring stack locally using Minikube, Helm, Prometheus, and Grafana.
